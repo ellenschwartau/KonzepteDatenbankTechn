@@ -16,10 +16,13 @@ public class PilotMain {
      */
     protected static ObjectContainer db;
 
+    /** Trennzeile für die Konsolenausgabe */
+    protected static final String SEPERATOR = "-------------";
+
     /**
-     * Liste der Piloten
+     * Liste der default Piloten
      */
-    protected static final List<Object> PILOTS = Arrays.asList(
+    protected static List<Object> PILOTS = Arrays.asList(
             new Pilot("Michael Schuhmacher", 0),
             new Pilot("Rubens Barricello", 0),
             new Pilot("Jenson Button", 0),
