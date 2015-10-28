@@ -5,6 +5,7 @@ package de.fhwedel.kdbt.ueb01;
 
 import java.util.List;
 
+import de.fhwedel.kdbt.Pilot;
 import de.fhwedel.kdbt.PilotMain;
 
 /**

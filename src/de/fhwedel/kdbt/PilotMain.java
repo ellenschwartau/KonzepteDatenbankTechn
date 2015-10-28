@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
-
-import de.fhwedel.kdbt.ueb01.Pilot;
+import com.db4o.query.Predicate;
+import com.db4o.query.Query;
 
 public class PilotMain {
 
@@ -55,6 +55,32 @@ public class PilotMain {
      */
     private static void create(List<Object> objects) {
         objects.forEach(db::store);
+    }
+
+    /**
+     * Liefert alle Piloten, die ein bestimmtes Constraint erfüllen.
+     * 
+     * @param predicate
+     * @param msg
+     */
+    protected static void getAllPilotsWithPredicate(Predicate<Pilot> predicate, String msg) {
+        System.out.println(msg);
+        List<Pilot> pilots = db.query(predicate);
+        pilots.forEach(System.out::println);
+        System.out.println(SEPERATOR);
+    }
+
+    /**
+     * Führt eine query aus und printed die ermittelten Piloten.
+     * 
+     * @param query Abfrage
+     * @param msg Beschreibung
+     */
+    protected static void getAllPilotsWithSodaQuery(Query query, String msg) {
+        System.out.println(msg);
+        List<Pilot> pilots = query.execute();
+        pilots.forEach(System.out::println);
+        System.out.println(SEPERATOR);
     }
 
 }
