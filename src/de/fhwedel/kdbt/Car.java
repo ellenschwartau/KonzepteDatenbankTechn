@@ -1,6 +1,5 @@
 package de.fhwedel.kdbt;
 
-
 public class Car {
 
     private String model;
@@ -21,6 +20,10 @@ public class Car {
 
     public Pilot getPilot() {
         return pilot;
+    }
+
+    public String toString() {
+        return model + "/" + pilot;
     }
 
 }

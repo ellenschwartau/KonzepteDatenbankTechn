@@ -26,12 +26,6 @@ public class Ueb02Main extends PilotMain {
      * @param args
      */
     public static void main(String[] args) {
-        PILOTS = Arrays.asList(
-                new Pilot("Michael Schuhmacher", 1),
-                new Pilot("Rubens Barricello", 0),
-                new Pilot("Jenson Button", 90),
-                new Pilot("Nick Hiedfeld", 100)
-                );
         refreshDb(DB_NAME);
         try {
             createPilots();
