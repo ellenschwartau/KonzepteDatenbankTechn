@@ -1,0 +1,67 @@
+2. Legen Sie bitte ein JSON-Dokument f¨ur ein Exemplar des Buchs ”
+Die K¨anguruChroniken: Ansichten eines vorlauten Beuteltiers“ von Marc-Uwe Kling 
+(Ullstein-Verlag) und ein Dokument f¨ur den Leser Friedrich Funke, Bahnhofstraße 17, 
+23758 Oldenburg an. Legen Sie bitte auch weitere B¨ucher und Leser-Dokumente Ihrer Wahl an. 
+Wie l¨asst sich der Sachverhalt, dass ein Leser ein bestimmtes Buch ausgeliehen hat, ausdr¨ucken?
+
+> db.buch.insert({invnr: 0, autor: 'Marc-Uwe Kling', verlag: 'Ullstein-Verlag', titel: 'Die Känguru-Chroniken: Ansichten eines vorlauten Beuteltiers'})
+> db.buch.insert({invnr: 1, autor: 'J. K. Rowling', verlag: 'XY-Verlag', titel: 'Harry Potter und der Stein der Weisen'})
+> db.leser.insert({lnr: 0, name: 'Friedrich Funke', adresse: 'Bahnhofstraße 17,23758 Oldenburg'})
+> db.leser.insert({lnr: 1, name: 'Ellen Schwartau', adresse: 'Osdorfer Weg 21, 22607 Hamburg'})
+
+
+3. Suchen Sie in Ihrer Mongo-Datenbank nach einem Buch mit dem Autor Marc-Uwe Kling.
+
+> db.buch.find({autor: 'Marc-Uwe Kling'})
+{ "_id" : ObjectId("5642ff5d22e4573c6d1307e5"), "invnr" : 0, "autor" : "Marc-Uwe Kling", "verlag" : "Ullstein-Verlag", "titel" : "Die Känguru-Chroniken: Ansichten eines vorlauten Beuteltiers" }
+
+
+4. Ermitteln Sie, wie viele B¨ucher Ihre Datenbank verwaltet.
+
+> db.buch.find({}).size()
+2
+
+
+5. Ermitteln Sie bitte alle Leser, die mehr als ein Buch ausgeliehen haben, 
+absteigend sortiert nach Anzahl der entliehenen B¨ucher.
+
+> db.entliehen.insert({buch: 0, autor: 0, rückgabedatum: '1.1.2016'})
+> db.entliehen.insert({buch: 1, autor: 0, rückgabedatum: '1.1.2016'})
+> db.entliehen.update({buch: 0, autor:0}, {buch: 0, leser: 0, rückgabedatum: '1.1.2016'})
+> db.entliehen.update({buch: 1, autor:0}, {buch: 1, leser: 0, rückgabedatum: '1.1.2016'})
+> db.entliehen.insert({buch: 1, leser: 1, rückgabedatum: '1.1.2016'})
+> db.entliehen.insert({buch: 0, leser: 1, rückgabedatum: '1.1.2016'})
+> db.buch.insert({invnr: 2, autor: 'Fantasie', verlag: 'ABC-Verlag', titel: 'Biene Maja'})
+> db.entliehen.insert({buch: 2, leser: 1, rückgabedatum: '1.1.2016'})
+
+> db.entliehen.aggregate([{$group: {_id: '$leser', count: {$sum: 1}}}, {$sort: {count: -1}}])
+{ "_id" : 1, "count" : 3 }
+{ "_id" : 0, "count" : 2 }
+
+
+6.  Welche Operationen auf der Datenbank muss man ausf¨uhren, um widerzuspiegeln, dass ein Leser ein Buch ausleiht bzw. zur¨uckgibt? Lassen Sie bitte Friedrich Funkte das K¨anguruBuch ausleihen und wieder zur¨uckgeben.
+
+> db.entliehen.insert({leser: 0, buch: 0, rückgabedatum: '11.11.2015'})
+> db.entliehen.remove({leser: 0, buch: 0, rückgabedatum: '11.11.2015'})
+
+
+7.  Statt getrennte JSON-Objekte f¨ur Leser, B¨ucher und Entliehen zu haben, k¨onnen entliehene B¨ucher 
+auch in einer Liste innerhalb von Leser-Dokumenten verwaltet werden. Legen Sie bitte (zus¨atzlich) 
+ein Leser-Dokument f¨ur Heinz M¨uller, Klopstockweg 17, 38124 Braunschweig an, der das obige 
+K¨anguru-Chroniken-Buch und auch noch ” Der K¨onig von Berlin“ von Horst Evers (Rowohlt-Verlag) 
+ausgeliehen hat. Welche Vor- und Nachteile hat diese Art die Daten abzulegen?
+
+> db.buch.insert({invnr: 3, autor: 'Horst Evers', titel: 'Der König von Berlin', verlag: 'Rowohlt-Verlag'})
+> db.leser.insert({lnr: 2, name: 'Heinz Müller', adresse: 'Klopstockweg 17, 38124 Braunschweig', entliehen: [0,3]})
+-> Anzahl entliehener Bücher kann man dann einfach über die Größe der Liste abfragen,
+   dafür muss man die Liste händisch pflegen, statt die entliehenen Bücher übersichtlich
+   und mit Zusatzinfos (wie z.B. Rückgabedatum) in eigener Tabelle zu verwalten
+
+
+8. Welche Operationen auf der nun anders strukturierten Datenbank muss man ausf¨uhren, 
+um widerzuspiegeln, dass ein Leser ein Buch ausleiht bzw. zur¨uckgibt? 
+Lassen Sie bitte Heinz M¨uller das K¨anguru-Buch zur¨uckgeben. 
+Friedrich Funke soll es wieder ausleihen
+
+> db.leser.update({name: 'Heinz Müller'}, {$set : {entliehen: [0]}})
+> db.leser.update({name: 'Friedrich Müller'}, {$set : {entliehen: [0,1]}})
